@@ -179,6 +179,17 @@
   function closeModal() { U.$('#modal').hidden = true; U.$('#modalBody').innerHTML = ''; }
   function close() { closeModal(); }
 
+  /* 同一份代码会部署到 GitHub Pages / Cloudflare Pages 等多个地址，
+     「我的站点」卡片始终显示当前正在访问的域名，避免写死一个地址。 */
+  (function () {
+    if (!/^https?:$/.test(w.location.protocol)) return;
+    var a = U.$('#siteUrl');
+    if (!a) return;
+    var here = w.location.origin + w.location.pathname;
+    a.href = here;
+    a.textContent = here + ' ↗';
+  })();
+
   VD.ui = {
     MOODS: MOODS, WEATHERS: WEATHERS,
     applyTheme: applyTheme, switchView: switchView, tickClock: tickClock,
