@@ -1,0 +1,8 @@
+# Windows 上 core.autocrlf=true 会把脚本换成 CRLF，导致 bash 执行报错；统一用 LF
+* text=auto
+*.sh   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.js   text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
