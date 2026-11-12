@@ -1,0 +1,52 @@
+name: Deploy Voice Diary to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+    # 日记是通过 GitHub API 写进仓库的，不因日记提交而重新部署站点
+    paths:
+      - 'index.html'
+      - 'css/**'
+      - 'js/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 只把应用静态文件放进发布目录，diaries/ 里的 Markdown 与图片绝不发布到网页
+      - name: Build site payload
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp index.html _site/
+          cp -r css js _site/
+          touch _site/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
